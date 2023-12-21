@@ -5,4 +5,9 @@ git:
 ssh: connect to host thub.com port 22: Connection timed out
 fatal: Could not read from remote repository.
 Please make sure you have the correct access rights and the repository exists.
+https://gist.github.com/bsara/5c4d90db3016814a3d2fe38d314f9c23
+https://github.com/orgs/community/discussions/33982
+https://blog.csdn.net/cxy18137478587/article/details/120128074?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522170313006916800215059808%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=170313006916800215059808&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~rank_v31_ecpm-1-120128074-null-null.142^v96^pc_search_result_base4&utm_term=remote%20origin%20already%20exists.&spm=1018.2226.3001.4187
+https://blog.csdn.net/weixin_40922744/article/details/107576748?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522170313030416800227410502%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=170313030416800227410502&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-107576748-null-null.142^v96^pc_search_result_base4&utm_term=fatal%3A%20could%20not%20read%20from%20remote%20repository&spm=1018.2226.3001.4187
+
 
