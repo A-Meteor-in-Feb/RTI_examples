@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dds SYSTEM "https://community.rti.com/schema/current/rti_dds_profiles.dtd"> 
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/6.1.2/rti_dds_profiles.xsd">
+
+    <!-- QoS Library, for now, just a placeholder -->
+    <qos_library name="qosLibrary">
+        <qos_profile name="DefaultProfile">
+            <datawriter_qos>
+
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    <depth>1</depth>
+                </history>
+
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+
+                <deadline>
+                    <period>
+                        <sec>30</sec>
+                    </period>
+                </deadline>
+
+                <durability>
+                    <writer_depth>1</writer_depth>
+                </durability>
+
+                <lifespan>
+                    <duration>
+                        <sec>3600</sec>
+                    </duration>
+                </lifespan>
+                
+            </datawriter_qos>
+            
+            <datareader_qos>
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    <depth>1</depth>
+                </history>
+
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                        
+                <deadline>
+                    <period>
+                        <sec>30</sec>
+                    </period>
+                </deadline>
+
+            </datareader_qos>
+
+        </qos_profile>
+    </qos_library>
+
+    <!-- types , put data type here -->
+    <types>
+
+        <module name="tele2vehicle">
+
+            <!-- tele to vehicle, when connected, periodically send -->
+            <struct name = "control_data">
+                <member name="tele" type="string" key="true" /> <!-- which tele operation platform -->
+                <member name="steering" type="float" />
+                <member name="gear" type="long" />
+                <member name="acceleration" type="float" />
+                <member name="brake" type="float" />
+                <member name="additional_button1" type="long" />
+                <member name="additional_button2" type="long" />
+                <member name="additional_button3" type="long" />
+            </struct>
+
+        </module>
+        
+
+        <module name="vehicle2tele">
+
+            <!-- vehicle to tele, always periodically send -->
+            <struct name="status_data">
+                <member name="vin" type="string" key="true"/>
+                <member name="online" type="boolean"/>
+                <member name="connected" type="boolean" />
+            </struct>
+
+            <!-- vehicle to tele, always periodically send-->
+            <struct name="GPSlocation_data">
+                <member name="vin" type="string" key="true"/>
+                <member name="latitude" type="double" />
+                <member name="longitude" type="double" />
+                <member name="altitude" type="double" />
+            </struct>
+
+            <!-- vehicle to tele, when connected, periodically send -->
+            <struct name="IMU_data">
+                <member name="vin" type="string" key="true"/>
+                <member name="quaternion" type="double" sequenceMaxLength="4" />
+                <member name="angular_velocity" type="double" sequenceMaxLength="3" />
+                <member name="linear_acceleration" type="double" sequenceMaxLength="3" />
+            </struct>
+
+            <!-- vehicle to tele, when connected, periodically send -->
+            <struct name="other_properties_data">
+                <member name="vin" type="string" key="true"/>
+                <member name="steering_position" type="double" />
+                <member name="speed" type="double" />
+                <member name="indicators" type="long" />
+                <member name="gear" type="long" />
+            </struct>
+        </module>
+
+    </types>
+
+    <!-- Domain Library
+         Used to define the system's Topics and the corresponding data types associated with each topic.--> 
+    <domain_library name="DomainLibrary0">
+        
+        <domain name="Tele_Vehicle_Domain" domain_id="0">
+
+            <register_type name="control_type" type_ref="control_data"></register_type>
+            <topic name="control_topic" register_type_ref="control_type">   
+                <!-- QoS needs to be changed later ... -->
+                <topic_qos name="control_qos" base_name="qosLibrary::DefaultProfile">
+
+                </topic_qos>
+            </topic>
+
+            <register_type name="status_type" type_ref="status_data"></register_type>
+            <topic name="status_topic" register_type_ref="status_type">
+                <topic_qos name="status_qos" base_name="qosLibrary::DefaultProfile">
+                    
+                </topic_qos>
+            </topic>
+
+            <register_type name="GPSlocation_type" type_ref="GPSlocation_data"></register_type>
+            <topic name="GPSlocation_topic" register_type_ref="GPSlocation_type">
+                <topic_qos name="GPSlocatioin_qos" base_name="qosLibrary::DefaultProfile">
+                    
+                </topic_qos>
+            </topic>
+
+            <register_type name="IMU_type" type_ref="IMU_data"></register_type>
+            <topic name="IMU_topic" register_type_ref="IMU_type">
+                <topic_qos name="IMU_qos" base_name="qosLibrary::DefaultProfile">
+                    
+                </topic_qos>
+            </topic>
+
+            <register_type name="other_properties_type" type_ref="other_properties_data"></register_type>
+            <topic name="other_properties_topic" register_type_ref="other_properties_type">
+                <topic_qos name="other_properties_qos" base_name="qosLibrary::DefaultProfile">
+                    
+                </topic_qos>
+            </topic>
+
+        </domain>
+        
+    </domain_library>
+
+    <domain_participant_library name = "TeleVehicleParicipantLibrary">
+
+        <domain_participant name="Publishers" domain_ref="DomainLibrary0::Tele_Vehicle_Domain">
+            
+            <publisher name="Tele_Publisher">
+                <data_writer name="control_DataWriter" topic_ref="control_topic"></data_writer>
+            </publisher>
+
+            <publisher name="Vehicle_Pubisher">
+                <data_writer name="status_DataWriter" topic_ref="status_topic"></data_writer>
+                <data_writer name="GPSlocation_DataWriter" topic_ref="GPSlocation_topic"></data_writer>
+                <data_writer name="IMU_DataWriter" topic_ref="IMU_topic"></data_writer>
+                <data_writer name="other_properties_DataWriter" topic_ref="other_properties_topic"></data_writer>
+            </publisher>
+        
+        </domain_participant>
+
+        
+
+        <domain_participant name = "Subscribers" domain_ref = "DomainLibrary0::Tele_Vehicle_Domain">
+            
+            <subscriber name="Tele_Subscriber">
+                <data_reader name="status_DataReader" topic_ref="status_topic"></data_reader>
+                <data_reader name="GPSlocation_DataReader" topic_ref="GPSlocation_topic"></data_reader>
+                <data_reader name="IMU_DataReader" topic_ref="IMU_topic"></data_reader>
+                <data_reader name="other_properties" topic_ref="other_properties_topic"></data_reader>
+            </subscriber>
+
+            <subscriber name="Vehicle_Subscriber">
+                <data_reader name="control_DataReader" topic_ref="control_topic"></data_reader>
+            </subscriber>
+            
+        </domain_participant>
+
+    </domain_participant_library>
+    
+</dds>
